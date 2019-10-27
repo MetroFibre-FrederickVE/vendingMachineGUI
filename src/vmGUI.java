@@ -366,9 +366,10 @@ class Stock {
         this.author = author;
     }
 
+    // CSV Test output
     @Override
     public String toString() {
-        return "Stock [name=" + name + ", price=" + price + ", author=" + author
+        return "Stock [name=" + name + ", price=" + price + ", stockcount=" + author
                 + "]";
     }
 
