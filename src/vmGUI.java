@@ -1,4 +1,3 @@
-import java.awt.BorderLayout;
 import java.awt.EventQueue;
 
 import javax.swing.JFrame;
@@ -7,36 +6,26 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 
-import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.Font;
-import javax.swing.SwingConstants;
-import java.awt.GridBagLayout;
-import java.awt.FlowLayout;
 import javax.swing.JButton;
 import javax.swing.border.TitledBorder;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextArea;
-import javax.swing.JTextPane;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.text.DecimalFormat;
 
 public class vmGUI extends JFrame {
 
@@ -51,6 +40,8 @@ public class vmGUI extends JFrame {
 	private JTextField energyDrinkTF;
 	private JTextField totalTF;
 
+	private static DecimalFormat df = new DecimalFormat("0.00");
+	
 	/**
 	 * Launch the application.
 	 * @throws IOException 
@@ -76,6 +67,7 @@ public class vmGUI extends JFrame {
 	 * @throws FileNotFoundException 
 	 */
 	public vmGUI() throws FileNotFoundException, IOException {
+		
 		setResizable(false);
 		setTitle("Vending Machine");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -109,16 +101,6 @@ public class vmGUI extends JFrame {
 		List<String> icData = records.get(4);
 		List<String> caData = records.get(5);
 		
-		/*
-		// Test print of CSV data
-		System.out.println(Arrays.toString(records.toArray()));
-		System.out.println(sdData.get(1));
-		System.out.println(edData.get(1));
-		System.out.println(scData.get(1));
-		System.out.println(lcData.get(1));
-		System.out.println(icData.get(1));
-		System.out.println(caData.get(1));
-		*/
 		
 		JPanel panel = new JPanel();
 		contentPane.add(panel);
@@ -210,6 +192,7 @@ public class vmGUI extends JFrame {
 		moneyInTF = new JTextField();
 		moneyInTF.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
+				
 			      char c = e.getKeyChar();
 			      if (!((c >= '0') && (c <= '9') || 
 			    		  (c == '.') ||
@@ -334,6 +317,7 @@ public class vmGUI extends JFrame {
 				
 				JOptionPane.showMessageDialog(null, "Thank you for your purchase & please call again.\n Press Ok to exit the program.");
 				System.exit(0);
+				
 			}
 
 		});
@@ -345,7 +329,9 @@ public class vmGUI extends JFrame {
 		JButton cancelBTN = new JButton("Cancel");
 		cancelBTN.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				
 				System.exit(0);
+				
 			}
 		});
 		cancelBTN.setBounds(364, 465, 89, 35);
@@ -358,8 +344,6 @@ public class vmGUI extends JFrame {
         		
         		purchaseBTN.setVisible(true);
         		btnCheckout.setVisible(false);
-        		
-        		//moneyInTF.setEditable(false);
         		
         		float softDrinkPrice = sdClick[0];
         		float energyDrinkPrice = edClick[0];
@@ -397,8 +381,12 @@ public class vmGUI extends JFrame {
 					purchaseBTN.setVisible(false);
 					btnCheckout.setVisible(true);
 				} else {
-					moneyOutTF.setText(Double.toString(moneyIn - total));
+					Double input = (double) (moneyIn - total);
+					df.setRoundingMode(RoundingMode.UP);
+					moneyOutTF.setText(df.format(input));
 				}
+				
+				
         		
         	}
         });
