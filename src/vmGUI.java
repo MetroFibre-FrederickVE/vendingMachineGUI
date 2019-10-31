@@ -325,46 +325,17 @@ public class vmGUI extends JFrame {
 		panel_1.add(icBT);
 		
 		// Action listener for "Purchase" button.
-		// Button press checks money amount against purchase price.
-		
-		float softDrinkPrice = sdClick[0];
-		float energyDrinkPrice = edClick[0];
-		float smlChipsPrice = scClick[0];
-		float lrgChipsPrice = lcClick[0];
-		float candysPrice = caClick[0];
-		float iceCreamPrice = icClick[0];
-		
-		float tempTotal = softDrinkPrice 
-				+ energyDrinkPrice
-				+ smlChipsPrice
-				+ lrgChipsPrice
-				+ candysPrice
-				+ iceCreamPrice;
-		
+		// Button press checks money amount against purchase price.						
 		JButton purchaseBTN = new JButton("Pay");
 		purchaseBTN.setVisible(false);
 		purchaseBTN.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-
-				float total = 0 ;
-				float moneyIn = (float) 0.00;
-				moneyIn = Float.parseFloat(moneyInTF.getText());
 				
-				if (tempTotal > 0) {
-					totalTF.setText(Double.toString(tempTotal));
-					total = tempTotal ;
-				} else {
-					
-				}
-				
-				if (moneyIn < 0 || moneyIn < total) {
-					JOptionPane.showMessageDialog(rootPane, "Not enough money.");
-				} else {
-					moneyOutTF.setText(Double.toString(moneyIn - total));
-				}
-				
+				JOptionPane.showMessageDialog(null, "Thank you for your purchase & please call again.\n Press Ok to exit the program.");
+				System.exit(0);
 			}
+
 		});
 		purchaseBTN.setBounds(73, 465, 89, 35);
 		panel.add(purchaseBTN);
@@ -380,9 +351,64 @@ public class vmGUI extends JFrame {
 		cancelBTN.setBounds(364, 465, 89, 35);
 		panel.add(cancelBTN);
 		
+        // Checkout button
+        JButton btnCheckout = new JButton("Check-out");
+        btnCheckout.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		
+        		purchaseBTN.setVisible(true);
+        		btnCheckout.setVisible(false);
+        		
+        		//moneyInTF.setEditable(false);
+        		
+        		float softDrinkPrice = sdClick[0];
+        		float energyDrinkPrice = edClick[0];
+        		float smlChipsPrice = scClick[0];
+        		float lrgChipsPrice = lcClick[0];
+        		float candysPrice = caClick[0];
+        		float iceCreamPrice = icClick[0];
+        		
+        		float tempTotal = softDrinkPrice 
+        				+ energyDrinkPrice
+        				+ smlChipsPrice
+        				+ lrgChipsPrice
+        				+ candysPrice
+        				+ iceCreamPrice;
+        		
+				float total = 0 ;
+				float moneyIn = (float) 0.00;
+				
+				if (moneyInTF.getText().isEmpty()) {
+					JOptionPane.showMessageDialog(rootPane, "Please enter your money before checking out.");
+				} else {
+					moneyIn = Float.parseFloat(moneyInTF.getText());
+				}
+				
+				
+				if (tempTotal > 0) {
+					totalTF.setText(Double.toString(tempTotal));
+					total = tempTotal ;
+				} else {
+					JOptionPane.showMessageDialog(rootPane, "Error");
+				}
+				
+				if (moneyIn < 0 || moneyIn < total) {
+					JOptionPane.showMessageDialog(rootPane, "Not enough money.");
+					purchaseBTN.setVisible(false);
+					btnCheckout.setVisible(true);
+				} else {
+					moneyOutTF.setText(Double.toString(moneyIn - total));
+				}
+        		
+        	}
+        });
+        btnCheckout.setVisible(true);
+        btnCheckout.setBounds(52, 465, 120, 35);
+        panel.add(btnCheckout);
+		
 		// Action listener for "Clear" button.
 		// Button press clears all selected radio buttons and text fields.
-		JButton clearBTN = new JButton("Clear");
+		JButton clearBTN = new JButton("Restart");
 		clearBTN.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
@@ -397,11 +423,16 @@ public class vmGUI extends JFrame {
 				
 				moneyInTF.setText(" ");
 				moneyOutTF.setText(" ");
+				totalTF.setText(" ");
+				
+        		purchaseBTN.setVisible(false);
+        		btnCheckout.setVisible(true);
+        		
+        		moneyInTF.setEditable(true);
 			}
 		});
 		clearBTN.setBounds(222, 465, 89, 35);
 		panel.add(clearBTN);
-
 		
         // Change text field value
         softDrinkTF.setText(sdData.get(1));
@@ -412,11 +443,6 @@ public class vmGUI extends JFrame {
         iceCreamTF.setText(icData.get(1));
         
         totalTF = new JTextField();
-        totalTF.addMouseListener(new MouseAdapter() {
-        	public void mouseReleased(MouseEvent e) {
-        		totalTF.setText(Double.toString(tempTotal));
-        	}
-        });
         totalTF.setEditable(false);
         totalTF.setBounds(374, 371, 79, 20);
         panel.add(totalTF);
@@ -437,26 +463,7 @@ public class vmGUI extends JFrame {
         
         JLabel label_1 = new JLabel("R ");
         label_1.setBounds(364, 436, 12, 16);
-        panel.add(label_1);
-        
-        // Checkout button
-        JButton btnCheckout = new JButton("Check-out");
-        btnCheckout.addActionListener(new ActionListener() {
-        	public void actionPerformed(ActionEvent e) {
-        		
-        		purchaseBTN.setVisible(true);
-        		btnCheckout.setVisible(false);
-        		
-        		//TODO Add total amount settings here
-        		
-        	}
-        });
-        btnCheckout.setVisible(true);
-        btnCheckout.setBounds(52, 465, 120, 35);
-        panel.add(btnCheckout);
-
-        
-        
+        panel.add(label_1); 
 	}
 }
 
