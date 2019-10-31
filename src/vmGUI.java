@@ -23,30 +23,40 @@ import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class vmGUI extends JFrame {
 
 	private JPanel contentPane;
 	private JTextField moneyInTF;
 	private JTextField moneyOutTF;
-	private JTextField textField;
-	private JTextField textField_1;
-	private JTextField textField_2;
-	private JTextField textField_3;
-	private JTextField textField_4;
-	private JTextField textField_5;
+	private JTextField softDrinkTF;
+	private JTextField smlChipsTF;
+	private JTextField candyTF;
+	private JTextField iceCreamTF;
+	private JTextField lrgChipsTF;
+	private JTextField energyDrinkTF;
+	private JTextField totalTF;
 
 	/**
 	 * Launch the application.
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws FileNotFoundException, IOException {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -57,66 +67,15 @@ public class vmGUI extends JFrame {
 				}
 			}
 		});
-		
-		List<Stock> items = readitemsFromCSV("data/stockList.csv");
-
-        // let's print all the person read from CSV file
-        for (Stock b : items) {
-            System.out.println(b);
-        }
-        
 	}
-	
-	private static List<Stock> readitemsFromCSV(String fileName) {
-        List<Stock> items = new ArrayList<>();
-        Path pathToFile = Paths.get(fileName);
-
-        // create an instance of BufferedReader
-        // using try with resource, Java 7 feature to close resources
-        try (BufferedReader br = Files.newBufferedReader(pathToFile,
-                StandardCharsets.US_ASCII)) {
-
-            // read the first line from the text file
-            String line = br.readLine();
-
-            // loop until all lines are read
-            while (line != null) {
-
-                // use string.split to load a string array with the values from
-                // each line of
-                // the file, using a comma as the delimiter
-                String[] attributes = line.split(",");
-
-                Stock item = createItem(attributes);
-
-                // adding Stock into ArrayList
-                items.add(item);
-
-                // read next line before looping
-                // if end of file reached, line would be null
-                line = br.readLine();
-            }
-
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-
-        return items;
-    }
-
-    private static Stock createItem(String[] metadata) {
-        String name = metadata[0];
-        int price = Integer.parseInt(metadata[1]);
-        String author = metadata[2];
-
-        // create and return Stock of this metadata
-        return new Stock(name, price, author);
-    }
+		
 
 	/**
 	 * Create the frame.
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
-	public vmGUI() {
+	public vmGUI() throws FileNotFoundException, IOException {
 		setResizable(false);
 		setTitle("Vending Machine");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -126,14 +85,49 @@ public class vmGUI extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(new GridLayout(0, 1, 0, 0));
 		
+		List<List<String>> records = new ArrayList<>();
+		try (BufferedReader br = new BufferedReader(new FileReader("data/stockList.csv"))) {
+		    String line;
+		    while ((line = br.readLine()) != null) {
+		        String[] values = line.split(",");
+		        records.add(Arrays.asList(values));
+		    }
+		}
+		
+		int[] sdClick = {0};
+		int[] edClick = {0};
+		int[] scClick = {0};
+		int[] lcClick = {0};
+		int[] caClick = {0};
+		int[] icClick = {0};
+		
+		
+		List<String> sdData = records.get(0);
+		List<String> edData = records.get(1);
+		List<String> scData = records.get(2);
+		List<String> lcData = records.get(3);
+		List<String> icData = records.get(4);
+		List<String> caData = records.get(5);
+		
+		/*
+		// Test print of CSV data
+		System.out.println(Arrays.toString(records.toArray()));
+		System.out.println(sdData.get(1));
+		System.out.println(edData.get(1));
+		System.out.println(scData.get(1));
+		System.out.println(lcData.get(1));
+		System.out.println(icData.get(1));
+		System.out.println(caData.get(1));
+		*/
+		
 		JPanel panel = new JPanel();
 		contentPane.add(panel);
 		panel.setLayout(null);
 		
-		// Panel containing radio buttons
+		// Panel containing item buttons
 		JPanel panel_1 = new JPanel();
 		panel_1.setBorder(new TitledBorder(null, "Please select your items...", TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panel_1.setBounds(10, 119, 524, 212);
+		panel_1.setBounds(10, 70, 524, 212);
 		panel.add(panel_1);
 		panel_1.setLayout(null);
 		
@@ -161,108 +155,215 @@ public class vmGUI extends JFrame {
 		edPrice.setBounds(30, 169, 62, 14);
 		panel_1.add(edPrice);
 		
-		JButton btnNewButton = new JButton("Soft Drinks");
-		btnNewButton.setBounds(20, 22, 136, 42);
-		panel_1.add(btnNewButton);
+		softDrinkTF = new JTextField();
+		softDrinkTF.setEditable(false);
+		softDrinkTF.setBounds(96, 72, 40, 20);
+		panel_1.add(softDrinkTF);
+		softDrinkTF.setColumns(10);
 		
-		JButton btnNewButton_1 = new JButton("Small Chips");
-		btnNewButton_1.setBounds(196, 22, 136, 42);
-		panel_1.add(btnNewButton_1);
+		smlChipsTF = new JTextField();
+		smlChipsTF.setEditable(false);
+		smlChipsTF.setColumns(10);
+		smlChipsTF.setBounds(270, 75, 40, 20);
+		panel_1.add(smlChipsTF);
 		
-		JButton btnNewButton_2 = new JButton("Candy's");
-		btnNewButton_2.setBounds(378, 22, 136, 42);
-		panel_1.add(btnNewButton_2);
+		candyTF = new JTextField();
+		candyTF.setEditable(false);
+		candyTF.setColumns(10);
+		candyTF.setBounds(459, 69, 40, 20);
+		panel_1.add(candyTF);
 		
-		JButton btnNewButton_3 = new JButton("Energy Drinks");
-		btnNewButton_3.setBounds(20, 116, 136, 42);
-		panel_1.add(btnNewButton_3);
+		iceCreamTF = new JTextField();
+		iceCreamTF.setEditable(false);
+		iceCreamTF.setColumns(10);
+		iceCreamTF.setBounds(459, 163, 40, 20);
+		panel_1.add(iceCreamTF);
 		
-		JButton btnNewButton_4 = new JButton("Large Chips");
-		btnNewButton_4.setBounds(196, 116, 136, 42);
-		panel_1.add(btnNewButton_4);
+		lrgChipsTF = new JTextField();
+		lrgChipsTF.setEditable(false);
+		lrgChipsTF.setColumns(10);
+		lrgChipsTF.setBounds(270, 169, 40, 20);
+		panel_1.add(lrgChipsTF);
 		
-		JButton btnNewButton_5 = new JButton("Ice-cream");
-		btnNewButton_5.setBounds(378, 116, 136, 42);
-		panel_1.add(btnNewButton_5);
-		
-		textField = new JTextField();
-		textField.setEditable(false);
-		textField.setBounds(96, 72, 40, 20);
-		panel_1.add(textField);
-		textField.setColumns(10);
-		
-		textField_1 = new JTextField();
-		textField_1.setEditable(false);
-		textField_1.setColumns(10);
-		textField_1.setBounds(270, 75, 40, 20);
-		panel_1.add(textField_1);
-		
-		textField_2 = new JTextField();
-		textField_2.setEditable(false);
-		textField_2.setColumns(10);
-		textField_2.setBounds(459, 69, 40, 20);
-		panel_1.add(textField_2);
-		
-		textField_3 = new JTextField();
-		textField_3.setEditable(false);
-		textField_3.setColumns(10);
-		textField_3.setBounds(459, 163, 40, 20);
-		panel_1.add(textField_3);
-		
-		textField_4 = new JTextField();
-		textField_4.setEditable(false);
-		textField_4.setColumns(10);
-		textField_4.setBounds(270, 169, 40, 20);
-		panel_1.add(textField_4);
-		
-		textField_5 = new JTextField();
-		textField_5.setEditable(false);
-		textField_5.setColumns(10);
-		textField_5.setBounds(96, 166, 40, 20);
-		panel_1.add(textField_5);
+		energyDrinkTF = new JTextField();
+		energyDrinkTF.setEditable(false);
+		energyDrinkTF.setColumns(10);
+		energyDrinkTF.setBounds(96, 166, 40, 20);
+		panel_1.add(energyDrinkTF);
 		
 		JLabel lblNewLabel = new JLabel("VENDING MACHINE");
 		lblNewLabel.setFont(new Font("Corbel", Font.BOLD, 42));
 		lblNewLabel.setBounds(73, 11, 380, 71);
 		panel.add(lblNewLabel);
 		
+		JLabel lblNewLabel_1 = new JLabel("Insert money here : ");
+		lblNewLabel_1.setFont(new Font("Arial", Font.BOLD, 13));
+		lblNewLabel_1.setBounds(364, 289, 170, 27);
+		panel.add(lblNewLabel_1);
+		
+		JLabel lblNewLabel_2 = new JLabel("Change : ");
+		lblNewLabel_2.setFont(new Font("Arial", Font.BOLD, 13));
+		lblNewLabel_2.setBounds(364, 402, 75, 20);
+		panel.add(lblNewLabel_2);
+		
+		// Validation
+		moneyInTF = new JTextField();
+		moneyInTF.addKeyListener(new KeyAdapter() {
+			public void keyTyped(KeyEvent e) {
+			      char c = e.getKeyChar();
+			      if (!((c >= '0') && (c <= '9') || 
+			    		  (c == '.') ||
+			         (c == KeyEvent.VK_BACK_SPACE) ||
+			         (c == KeyEvent.VK_DELETE))) {
+			        getToolkit().beep();
+			        e.consume();
+			      }
+			    }
+			  });
+				    
+		moneyInTF.setBounds(374, 315, 79, 20);
+		panel.add(moneyInTF);
+		moneyInTF.setColumns(10);
+		
+		moneyOutTF = new JTextField();
+		moneyOutTF.setEditable(false);
+		moneyOutTF.setBounds(374, 434, 79, 20);
+		panel.add(moneyOutTF);
+		moneyOutTF.setColumns(10);
+		
+		JTextArea purchaseTA = new JTextArea();
+		purchaseTA.setLineWrap(true);
+		purchaseTA.setFont(new Font("Arial", Font.BOLD, 13));
+		purchaseTA.setWrapStyleWord(true);
+		purchaseTA.setText("         Selected items for Purchase : \r\n\r\n");
+		purchaseTA.setEditable(false);
+		purchaseTA.setBounds(42, 292, 295, 161);
+		panel.add(purchaseTA);
+		
+		JButton sdBT = new JButton("Soft Drinks");
+		sdBT.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				float sdTemp = Float.parseFloat(sdData.get(1));
+				sdClick[0] += sdTemp;
+				
+				purchaseTA.append("Item : " + sdData.get(0) + " - Price : R " + sdData.get(1) + "\n");
+				
+			}
+		});
+		sdBT.setBounds(20, 22, 136, 42);
+		panel_1.add(sdBT);
+		
+		JButton scBT = new JButton("Small Chips");
+		scBT.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				float scTemp = Float.parseFloat(scData.get(1));
+				scClick[0] += scTemp;
+				
+				purchaseTA.append("Item : " + scData.get(0) + " - Price : R " + scData.get(1) + "\n");
+				
+			}
+		});
+		scBT.setBounds(196, 22, 136, 42);
+		panel_1.add(scBT);
+		
+		JButton caBT = new JButton("Candy's");
+		caBT.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				float caTemp = Float.parseFloat(caData.get(1));
+				caClick[0] += caTemp;
+				
+				purchaseTA.append("Item : " + caData.get(0) + " - Price : R " + caData.get(1) + "\n");
+				
+			}
+		});
+		caBT.setBounds(378, 22, 136, 42);
+		panel_1.add(caBT);
+		
+		JButton edBT = new JButton("Energy Drinks");
+		edBT.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				float edTemp = Float.parseFloat(edData.get(1));
+				edClick[0] += edTemp;
+				
+				purchaseTA.append("Item : " + edData.get(0) + " - Price : R " + edData.get(1) + "\n");
+				
+			}
+		});
+		edBT.setBounds(20, 116, 136, 42);
+		panel_1.add(edBT);
+		
+		JButton lcBT = new JButton("Large Chips");
+		lcBT.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				float lcTemp = Float.parseFloat(lcData.get(1));
+				lcClick[0] += lcTemp;
+				
+				purchaseTA.append("Item : " + lcData.get(0) + " - Price : R " + lcData.get(1) + "\n");
+				
+			}
+		});
+		lcBT.setBounds(196, 116, 136, 42);
+		panel_1.add(lcBT);
+		
+		JButton icBT = new JButton("Ice-cream");
+		icBT.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				float icTemp = Float.parseFloat(icData.get(1));
+				icClick[0] += icTemp;
+				
+				purchaseTA.append("Item : " + icData.get(0) + " - Price : R " + icData.get(1) + "\n");
+				
+			}
+		});
+		icBT.setBounds(378, 116, 136, 42);
+		panel_1.add(icBT);
+		
 		// Action listener for "Purchase" button.
 		// Button press checks money amount against purchase price.
-		JButton purchaseBTN = new JButton("Purchase");
+		
+		float softDrinkPrice = sdClick[0];
+		float energyDrinkPrice = edClick[0];
+		float smlChipsPrice = scClick[0];
+		float lrgChipsPrice = lcClick[0];
+		float candysPrice = caClick[0];
+		float iceCreamPrice = icClick[0];
+		
+		float tempTotal = softDrinkPrice 
+				+ energyDrinkPrice
+				+ smlChipsPrice
+				+ lrgChipsPrice
+				+ candysPrice
+				+ iceCreamPrice;
+		
+		JButton purchaseBTN = new JButton("Pay");
+		purchaseBTN.setVisible(false);
 		purchaseBTN.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-			
-				double softDrinkPrice = 12.00;
-				double energyDrinkPrice = 20.00;
-				double smlChipsPrice = 14.00;
-				double lrgChipsPrice = 25.00;
-				double candysPrice = 8.00;
-				double iceCreamPrice = 11.00;
+
+				float total = 0 ;
+				float moneyIn = (float) 0.00;
+				moneyIn = Float.parseFloat(moneyInTF.getText());
 				
-				double moneyIn = 0.00;
-				
-				moneyIn = Double.parseDouble(moneyInTF.getText());
-				/*
-				if (softDrinkRB.isSelected()) {
-					moneyIn = moneyIn - softDrinkPrice;
-				} else if (energyDrinkRB.isSelected()) {
-					moneyIn = moneyIn - energyDrinkPrice;
-				} else if (candysRB.isSelected()) {
-					moneyIn = moneyIn - candysPrice;
-				} else if (smlChipsRB.isSelected()) {
-					moneyIn = moneyIn - smlChipsPrice;
-				} else if (lrgChipsRB.isSelected()) {
-					moneyIn = moneyIn - lrgChipsPrice;
-				} else if (iceCreamRB.isSelected()) {
-					moneyIn = moneyIn - iceCreamPrice;
+				if (tempTotal > 0) {
+					totalTF.setText(Double.toString(tempTotal));
+					total = tempTotal ;
+				} else {
+					
 				}
-				*/
-				if (moneyIn < 0) {
+				
+				if (moneyIn < 0 || moneyIn < total) {
 					JOptionPane.showMessageDialog(rootPane, "Not enough money.");
 				} else {
-					moneyOutTF.setText(Double.toString(moneyIn));
+					moneyOutTF.setText(Double.toString(moneyIn - total));
 				}
+				
 			}
 		});
 		purchaseBTN.setBounds(73, 465, 89, 35);
@@ -284,95 +385,80 @@ public class vmGUI extends JFrame {
 		JButton clearBTN = new JButton("Clear");
 		clearBTN.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				/*
-				softDrinkRB.setSelected(false);
-				lrgChipsRB.setSelected(false);
-				iceCreamRB.setSelected(false);
-				smlChipsRB.setSelected(false);
-				energyDrinkRB.setSelected(false);
-				candysRB.setSelected(false);
-				*/
+				
+				purchaseTA.setText("Selected items for Purchase : \r\n\r\n");
+				
+				sdClick[0] = 0;
+				edClick[0] = 0;
+				scClick[0] = 0;
+				lcClick[0] = 0;
+				caClick[0] = 0;
+				icClick[0] = 0;
+				
 				moneyInTF.setText(" ");
 				moneyOutTF.setText(" ");
 			}
 		});
 		clearBTN.setBounds(222, 465, 89, 35);
 		panel.add(clearBTN);
+
 		
-		JLabel lblNewLabel_1 = new JLabel("Insert money here : R");
-		lblNewLabel_1.setFont(new Font("Tahoma", Font.ITALIC, 13));
-		lblNewLabel_1.setBounds(73, 81, 135, 27);
-		panel.add(lblNewLabel_1);
-		
-		JLabel lblNewLabel_2 = new JLabel("Change : R");
-		lblNewLabel_2.setFont(new Font("Tahoma", Font.ITALIC, 13));
-		lblNewLabel_2.setBounds(307, 84, 75, 20);
-		panel.add(lblNewLabel_2);
-		
-		moneyInTF = new JTextField();
-		moneyInTF.setBounds(206, 85, 75, 20);
-		panel.add(moneyInTF);
-		moneyInTF.setColumns(10);
-		
-		moneyOutTF = new JTextField();
-		moneyOutTF.setEditable(false);
-		moneyOutTF.setBounds(378, 85, 75, 20);
-		panel.add(moneyOutTF);
-		moneyOutTF.setColumns(10);
-		
-		JTextArea textArea = new JTextArea();
-		textArea.setBounds(265, 329, 188, 125);
-		panel.add(textArea);
-		
-		JTextPane textPane = new JTextPane();
-		textPane.setBounds(73, 329, 188, 125);
-		panel.add(textPane);
+        // Change text field value
+        softDrinkTF.setText(sdData.get(1));
+        energyDrinkTF.setText(edData.get(1));
+        smlChipsTF.setText(scData.get(1));
+        lrgChipsTF.setText(lcData.get(1));
+        candyTF.setText(caData.get(1));
+        iceCreamTF.setText(icData.get(1));
+        
+        totalTF = new JTextField();
+        totalTF.addMouseListener(new MouseAdapter() {
+        	public void mouseReleased(MouseEvent e) {
+        		totalTF.setText(Double.toString(tempTotal));
+        	}
+        });
+        totalTF.setEditable(false);
+        totalTF.setBounds(374, 371, 79, 20);
+        panel.add(totalTF);
+        totalTF.setColumns(10);
+        
+        JLabel lblNewLabel_3 = new JLabel("Total Amount : ");
+        lblNewLabel_3.setFont(new Font("Arial", Font.BOLD, 13));
+        lblNewLabel_3.setBounds(364, 346, 97, 14);
+        panel.add(lblNewLabel_3);
+        
+        JLabel lblR = new JLabel("R ");
+        lblR.setBounds(364, 317, 12, 16);
+        panel.add(lblR);
+        
+        JLabel label = new JLabel("R ");
+        label.setBounds(364, 373, 12, 16);
+        panel.add(label);
+        
+        JLabel label_1 = new JLabel("R ");
+        label_1.setBounds(364, 436, 12, 16);
+        panel.add(label_1);
+        
+        // Checkout button
+        JButton btnCheckout = new JButton("Check-out");
+        btnCheckout.addActionListener(new ActionListener() {
+        	public void actionPerformed(ActionEvent e) {
+        		
+        		purchaseBTN.setVisible(true);
+        		btnCheckout.setVisible(false);
+        		
+        		//TODO Add total amount settings here
+        		
+        	}
+        });
+        btnCheckout.setVisible(true);
+        btnCheckout.setBounds(52, 465, 120, 35);
+        panel.add(btnCheckout);
+
+        
+        
 	}
-
 }
 
-class Stock {
-    private String name;
-    private int price;
-    private String author;
-
-    public Stock(String name, int price, String author) {
-        this.name = name;
-        this.price = price;
-        this.author = author;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    // CSV Test output
-    @Override
-    public String toString() {
-        return "Stock [name=" + name + ", price=" + price + ", stockcount=" + author
-                + "]";
-    }
-
-}
 
 
