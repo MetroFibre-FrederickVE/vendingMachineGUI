@@ -52,12 +52,14 @@ public class vmGUI extends JFrame {
 	 * @throws FileNotFoundException 
 	 */
 	// Initiates main method of class.
-	public static void main(String[] args) throws FileNotFoundException, IOException {
+	public static void main(String[] args) throws FileNotFoundException, IOException { 
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					vmGUI frame = new vmGUI();
 					frame.setVisible(true);
+					// Generates welcome message.
+					JOptionPane.showMessageDialog(null, "Welcome to the vending machine. Please make your selection, enter your money and checkout / pay.", "Welcome Message.", JOptionPane.PLAIN_MESSAGE);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -81,6 +83,7 @@ public class vmGUI extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new GridLayout(0, 1, 0, 0));
+		setLocationRelativeTo(null);  // *** this will center your app ***
 		
 		
 		// Reads data from CSV to a list.
@@ -200,11 +203,12 @@ public class vmGUI extends JFrame {
 		panel.add(lblNewLabel_2);
 		
 		
-		// Validation
+		// Input validation
+		// Restricts user to only entering float numbers (0 - 9 & ".") 
 		moneyInTF = new JTextField();
 		moneyInTF.addKeyListener(new KeyAdapter() {
 			public void keyTyped(KeyEvent e) {
-				
+	
 			      char c = e.getKeyChar();
 			      if (!((c >= '0') && (c <= '9') || 
 			    		  (c == '.') ||
@@ -333,7 +337,7 @@ public class vmGUI extends JFrame {
 		purchaseBTN.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
-				JOptionPane.showMessageDialog(null, "Thank you for your purchase & please call again.\n Press Ok to exit the program.");
+				JOptionPane.showMessageDialog(null, "Thank you for your purchase & please call again.\n Press Ok to exit the program.", "Thank you!", JOptionPane.INFORMATION_MESSAGE);
 				System.exit(0);
 			}
 		});
@@ -385,7 +389,7 @@ public class vmGUI extends JFrame {
 				// Checks if user entered any money.
 				// If not, a warning message is displayed.
 				if (moneyInTF.getText().isEmpty()) {
-					JOptionPane.showMessageDialog(rootPane, "Please enter your money before checking out.");
+					JOptionPane.showMessageDialog(rootPane, "Please enter your money before checking out.\n You need to enter at least R" + df.format(tempTotal), "No money entered!", JOptionPane.WARNING_MESSAGE);
 				} else {
 					// Else, sets variable value equal to amount entered.
 					moneyIn = Float.parseFloat(moneyInTF.getText());
@@ -405,7 +409,7 @@ public class vmGUI extends JFrame {
 				// Checks if user entered enough money for purchase.
 				if (moneyIn < 0 || moneyIn < total) {
 					// Displays error message and resets "Checkout" process.
-					JOptionPane.showMessageDialog(rootPane, "Not enough money.");
+					JOptionPane.showMessageDialog(rootPane, "Not enough money entered.", "Error!", JOptionPane.ERROR_MESSAGE);
 					purchaseBTN.setVisible(false);
 					checkoutBTN.setVisible(true);
 				} else {
